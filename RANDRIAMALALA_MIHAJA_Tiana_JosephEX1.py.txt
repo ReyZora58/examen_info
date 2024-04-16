@@ -1,0 +1,115 @@
+﻿ALGORITHME EX01
+﻿
+FONCTION evaluer_expression(expression_python, valeurs_variables) RENVOIE LOGIQUE
+  TENTE
+    resultat_fonction = EVAL(expression_python, valeurs_variables)
+  SAUF ERREUR Nom OU Syntaxe COMME e
+    AFFICHER("Erreur d'évaluation de l'expression :", e)
+    resultat_fonction = RIEN
+  FIN TENTE
+  RENVOIE resultat_fonction
+FIN FONCTION
+
+FONCTION afficher_somme_des_produits(table_verite, noms_variables)
+  nombre_variables = LONGUEUR(noms_variables)
+  forme_canonique = CHAINE VIDE
+  POUR ligne DE table_verite FAIRE
+    est_vrai = FAUX
+    POUR j DE 0 A nombre_variables - 1 FAIRE
+      valeur = table_verite[ligne][j]
+      SI valeur EST VRAI ALORS
+        est_vrai = VRAI
+        SI forme_canonique EST PAS VIDE ALORS
+          forme_canonique = forme_canonique + " OU "
+        FIN SI
+        forme_canonique = forme_canonique + "(" + noms_variables[j] + ")"
+      SINON 
+        est_vrai = FAUX
+        forme_canonique = forme_canonique + "(NON (" + noms_variables[j] + "))"
+      FIN SI
+    FIN POUR
+    SI est_vrai ALORS
+      forme_canonique = forme_canonique + " OU "
+    FIN SI
+  FIN POUR
+  forme_canonique = COUPER(forme_canonique, 0, LONGUEUR(forme_canonique) - 3) 
+  AFFICHER("La somme des produits est :\n" + forme_canonique)
+FIN FONCTION
+
+FONCTION afficher_produit_des_sommes(table_verite, noms_variables)
+  nombre_variables = LONGUEUR(noms_variables)
+  forme_canonique = CHAINE VIDE
+  POUR ligne DE table_verite FAIRE
+    est_faux = VRAI
+    POUR j DE 0 A nombre_variables - 1 FAIRE
+      valeur = table_verite[ligne][j]
+      SI valeur EST FAUX ALORS
+        est_faux = FAUX
+        SI forme_canonique EST PAS VIDE ALORS
+          forme_canonique = forme_canonique + " ET "
+        FIN SI
+        forme_canonique = forme_canonique + "(" + noms_variables[j] + ")"
+      SINON 
+        est_faux = VRAI
+      FIN SI
+    FIN POUR
+    SI est_faux ALORS
+      forme_canonique = forme_canonique + " ET "
+    FIN SI
+  FIN POUR
+  forme_canonique = COUPER(forme_canonique, 0, LONGUEUR(forme_canonique) - 3) 
+  AFFICHER("Le produit des sommes est :\n" + forme_canonique)
+FIN FONCTION
+
+FONCTION puissance_de_deux(n) RENVOIE NOMBRE
+  SI n EST EGAL A 0 ALORS
+    RENVOIE 1
+  SINON
+    RENVOIE 2 * puissance_de_deux(n - 1)
+  FIN SI
+FIN FONCTION
+
+FONCTION creer_table_verite(nombre_variables) RENVOIE LISTE DE LISTE DE LOGIQUE
+  valeurs = [FAUX, VRAI]
+  table_verite = LISTE VIDE
+  POUR i DE 0 A puissance_de_deux(nombre_variables) - 1 FAIRE
+    combinaison = LISTE VIDE
+    POUR j DE 0 A nombre_variables - 1 FAIRE
+      combinaison.AJOUTER(valeurs[i % 2])
+      i = ENTIER(i / 2) 
+    FIN POUR
+    table_verite.AJOUTER(combinaison)
+  FIN POUR
+  RENVOIE table_verite
+FIN FONCTION
+
+FONCTION afficher_entete(noms_variables)
+  longueur_entete = 14 + 5 * LONGUEUR(noms_variables)
+  AFFICHER(REPETE("-", longueur_entete))
+  AFFICHER("| ", NOM_ALIGNEMENT_CENTRE = longueur_entete)
+  POUR nom DANS noms_variables FAIRE
+    AFFICHER(nom, NOM_ALIGNEMENT_CENTRE = 5)
+  FIN POUR
+  AFFICHER("| F(", NOM_ALIGNEMENT_CENTRE = longueur_entete - 1 - 5 * LONGUEUR(noms_variables))
+  AFFICHER(CHAINE.JOINDRE(noms_variables, ", "), NOM_ALIGNEMENT_CENTRE = longueur_entete - 1)
+  AFFICHER(")")
+  AFFICHER(REPETE("-", longueur_entete))
+FIN FONCTION
+
+FONCTION afficher_ligne(ligne)
+  AFFICHER("| ", NOM_ALIGNEMENT_CENTRE = 14)
+  POUR valeur DANS ligne FAIRE
+    AFFICHER(valeur, NOM_ALIGNEMENT_CENTRE = 4)
+  FIN POUR
+  AFFICHER("|")
+FIN FONCTION
+
+VARIABLE
+DEBUT
+	creer_table_verite(nombre_variables)
+	
+	afficher_entete(noms_variables)	
+	afficher_somme_des_produits(table_verite, noms_variables)
+	afficher_produit_des_sommes(table_verite, noms_variables)	
+FIN
+?_k
